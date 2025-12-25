@@ -1,32 +1,33 @@
-import matplotlib.pyplot as plt
-import numpy as np
-from PIL import Image
+import PIL
 
 
-def add_masks_from_sam3(image: Image.Image, sam3_output: dict) -> dict:
-    masks = sam3_output["masks"]
-    masks_np = masks.detach().cpu().numpy()[:, 0, ...].astype(np.uint8)
+def load_models():
+    from .sam import get_sam3_processor
 
-    base = image.convert("RGBA")
-    W, H = base.size
+    get_sam3_processor()
 
-    for i, mask in enumerate(masks_np):
-        if mask.shape != (H, W):
-            mask = np.asarray(
-                Image.fromarray((mask * 255).astype(np.uint8), mode="L").resize(
-                    (W, H), resample=Image.Resampling.NEAREST
-                )
-            )
-            mask = (mask > 0).astype(np.uint8)
+def boxes_overlap(box1: tuple[int, int, int, int], box2: tuple[int, int, int, int]) -> bool:
+    x1_min, y1_min, x1_max, y1_max = box1
+    x2_min, y2_min, x2_max, y2_max = box2
+    
+    # check if boxes don't overlap (easier to check)
+    if x1_max < x2_min or x2_max < x1_min or y1_max < y2_min or y2_max < y1_min:
+        return False
+    return True
 
-        r, g, b, _ = plt.cm.tab10(i % 10)
-        overlay = np.zeros((H, W, 4), dtype=np.uint8)
-        overlay[..., 0] = int(r * 255)
-        overlay[..., 1] = int(g * 255)
-        overlay[..., 2] = int(b * 255)
-        overlay[..., 3] = (mask * 128).astype(np.uint8)  # ~0.5 alpha
 
-        base = Image.alpha_composite(base, Image.fromarray(overlay, mode="RGBA"))
+def add_boxes(
+    image: PIL.Image.Image, boxes: list[tuple[int, int, int, int]], labels: list[str] | None = None
+) -> PIL.Image.Image:
+    if labels is None:
+        labels = [""] * len(boxes)
 
-    image_with_masks = base.convert("RGB")
-    return image_with_masks
+    image_with_boxes = image.convert("RGB")
+    draw = PIL.ImageDraw.Draw(image_with_boxes)
+    font = PIL.ImageFont.load_default(size=60)
+
+    for box, label in zip(boxes, labels):
+        xmin, ymin, xmax, ymax = box
+        draw.rectangle([xmin, ymin, xmax, ymax], outline="red", width=3)
+        draw.text((xmin + 50, ymax - 100), label, fill="red", font=font)
+    return image_with_boxes

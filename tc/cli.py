@@ -7,22 +7,31 @@ from . import tasks
 
 def main(task: int, output_dir: str = "out", **kwargs):
     out_dir = Path(output_dir)
-    out_dir.mkdir(parents=True, exist_ok=True)
+    _out_dir = out_dir / f"task{task}"
+    _out_dir.mkdir(parents=True, exist_ok=True)
+
+    image_path = kwargs.get("image_path", "")
+    image_name = Path(image_path).stem
+    prompt = kwargs.get("prompt", "")
 
     if task == 1:
-        image_path = kwargs.get("image_path", "")
-        prompt = kwargs.get("prompt", "")
+        try:
+            import ast
+
+            parsed = ast.literal_eval(prompt)
+            if isinstance(parsed, list):
+                prompt = parsed
+        except (ValueError, SyntaxError):
+            pass
         output = tasks.run_task1(image_path=image_path, prompt=prompt)
-
-        image_name = Path(image_path).stem
-        output.save(out_dir / f"{image_name}-task1.png")
-
     elif task == 2:
-        print("Hello from sam 2!")
+        output = tasks.run_task2(image_path=image_path, prompt=prompt)
     elif task == 3:
         print("Hello from sam 3!")
     else:
         print("Invalid task!")
+
+    output.save(_out_dir / f"{image_name}-{prompt}.png")
 
 
 def cli() -> None:
