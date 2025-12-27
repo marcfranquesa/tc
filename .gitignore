@@ -11,4 +11,9 @@ wheels/
 
 .env
 
-out
+out/
+pretrained/
+
+# pixi environments
+.pixi/*
+!.pixi/config.toml

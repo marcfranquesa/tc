@@ -2,14 +2,19 @@ import PIL
 
 
 def load_models():
+    from ._ram import get_ram_plus_model
     from .sam import get_sam3_processor
 
     get_sam3_processor()
+    get_ram_plus_model()
 
-def boxes_overlap(box1: tuple[int, int, int, int], box2: tuple[int, int, int, int]) -> bool:
+
+def boxes_overlap(
+    box1: tuple[int, int, int, int], box2: tuple[int, int, int, int]
+) -> bool:
     x1_min, y1_min, x1_max, y1_max = box1
     x2_min, y2_min, x2_max, y2_max = box2
-    
+
     # check if boxes don't overlap (easier to check)
     if x1_max < x2_min or x2_max < x1_min or y1_max < y2_min or y2_max < y1_min:
         return False
@@ -17,7 +22,9 @@ def boxes_overlap(box1: tuple[int, int, int, int], box2: tuple[int, int, int, in
 
 
 def add_boxes(
-    image: PIL.Image.Image, boxes: list[tuple[int, int, int, int]], labels: list[str] | None = None
+    image: PIL.Image.Image,
+    boxes: list[tuple[int, int, int, int]],
+    labels: list[str] | None = None,
 ) -> PIL.Image.Image:
     if labels is None:
         labels = [""] * len(boxes)
