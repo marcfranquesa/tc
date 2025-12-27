@@ -25,16 +25,35 @@ def add_boxes(
     image: PIL.Image.Image,
     boxes: list[tuple[int, int, int, int]],
     labels: list[str] | None = None,
+    colors: list[str] | None = None,
 ) -> PIL.Image.Image:
     if labels is None:
         labels = [""] * len(boxes)
+    if colors is None:
+        colors = ["red"] * len(boxes)
+    
+    assert len(boxes) == len(labels), "boxes and labels must have the same length"
+    assert len(boxes) == len(colors), "boxes and colors must have the same length"
 
     image_with_boxes = image.convert("RGB")
     draw = PIL.ImageDraw.Draw(image_with_boxes)
-    font = PIL.ImageFont.load_default(size=60)
+    font = PIL.ImageFont.load_default(size=50)
 
-    for box, label in zip(boxes, labels):
+    for box, label, color in zip(boxes, labels, colors):
         xmin, ymin, xmax, ymax = box
         draw.rectangle([xmin, ymin, xmax, ymax], outline="red", width=3)
-        draw.text((xmin + 50, ymax - 100), label, fill="red", font=font)
+        text_bbox = draw.textbbox((0, 0), label, font=font)
+        text_width = text_bbox[2] - text_bbox[0]
+        text_height = text_bbox[3] - text_bbox[1]
+        label_x = box[0]
+        label_y = max(0, box[1] - text_height - 5)
+
+        draw.rectangle(
+            [label_x, label_y, label_x + text_width + 4, label_y + text_height + 4],
+            fill=color,
+            outline=color,
+        )
+
+        # Draw text
+        draw.text((label_x + 2, label_y - 10), label, fill=(255, 255, 255), font=font)
     return image_with_boxes

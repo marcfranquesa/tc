@@ -23,25 +23,22 @@ def get_ram_plus_model():
         _RAM_PLUS_MODEL.to(DEVICE)
     return _RAM_PLUS_MODEL
 
-def label_boxes(image_path: str, bboxes: list[tuple[int, int, int, int]]):
+
+def label_boxes(image: PIL.Image.Image, bboxes: list[tuple[int, int, int, int]]):
     model = get_ram_plus_model()
     transform = ram.get_transform(_IMAGE_SIZE)
 
-    raw_image = PIL.Image.open(image_path).convert('RGB')
+    raw_image = image.convert("RGB")
     results = []
 
     for box in bboxes:
         crop = raw_image.crop((box[0], box[1], box[2], box[3]))
         image_tensor = transform(crop).unsqueeze(0).to(DEVICE)
-        
+
         res = ram.inference_ram(image_tensor, model)
-        
-        primary_label = res[0].split(' | ')[0] 
-        
-        results.append({
-            "box": box,
-            "label": primary_label,
-            "all_tags": res[0]
-        })
-        
+
+        all_tags = res[0].split(" | ")
+
+        results.append(all_tags)
+
     return results

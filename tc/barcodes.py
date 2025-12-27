@@ -1,3 +1,5 @@
+import PIL
+import pyzbar.pyzbar as pyzbar
 import cv2
 import numpy as np
 
@@ -19,3 +21,18 @@ def estimate_normal_vectors(barcode_masks: np.ndarray) -> np.ndarray:
         normal_vector = _estimate_normal_vector(barcode_mask)
         normal_vectors.append(normal_vector)
     return np.array(normal_vectors)
+
+
+def decode(
+    image: PIL.Image.Image, bboxes: list[tuple[float, float, float, float]]
+) -> list[str]:
+    decoded_barcodes = []
+    for bbox in bboxes:
+        x, y, w, h = bbox
+        cropped_image = image.crop((x, y, x + w, y + h))
+        decoded = pyzbar.decode(cropped_image)
+        if decoded:
+            decoded_barcodes.append(decoded[0].data.decode("utf-8"))
+        else:
+            decoded_barcodes.append("?")
+    return decoded_barcodes
