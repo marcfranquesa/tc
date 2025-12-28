@@ -1,8 +1,8 @@
 import PIL
-from ram.models import ram_plus
 import ram
 import torch
 from huggingface_hub import hf_hub_download
+from ram.models import ram_plus
 
 _RAM_PLUS_MODEL = None
 _WEIGHTS_PATH = hf_hub_download(

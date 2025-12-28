@@ -3,10 +3,12 @@ import PIL
 
 def load_models():
     from ._ram import get_ram_plus_model
+    from .marigold import get_marigold_normals_pipeline
     from .sam import get_sam3_processor
 
     get_sam3_processor()
     get_ram_plus_model()
+    get_marigold_normals_pipeline()
 
 
 def boxes_overlap(
@@ -31,7 +33,7 @@ def add_boxes(
         labels = [""] * len(boxes)
     if colors is None:
         colors = ["red"] * len(boxes)
-    
+
     assert len(boxes) == len(labels), "boxes and labels must have the same length"
     assert len(boxes) == len(colors), "boxes and colors must have the same length"
 

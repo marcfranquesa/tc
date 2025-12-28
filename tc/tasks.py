@@ -1,7 +1,7 @@
 import numpy as np
 import PIL
 
-from . import sam, utils, _ram, barcodes
+from . import _ram, barcodes, marigold, sam, utils
 
 
 def _parse_prompt(prompt: str | list[str]):
@@ -26,12 +26,12 @@ def run_task2(image_path: str = "", prompt: str = ""):
     output = sam.run_sam3_batch(image, prompt)
 
     results = list(output.values())
-    barcodes = results[-1]
+    barcode_results = results[-1]
     bboxes = np.concatenate(
         [result["boxes"].numpy() for result in results[:-1]], axis=0
     )
-    barcode_bboxes = barcodes["boxes"].numpy()
-    barcode_masks = barcodes["masks"].numpy()
+    barcode_bboxes = barcode_results["boxes"].numpy()
+    barcode_masks = barcode_results["masks"].numpy()
 
     overlapping_barcode_bboxes = []
     overlapping_barcode_masks = []
@@ -44,9 +44,11 @@ def run_task2(image_path: str = "", prompt: str = ""):
                 break
 
     image_with_boxes = utils.add_boxes(image, overlapping_barcode_bboxes)
+    normal_vectors = marigold.get_normals(image_path)
+    image_with_boxes_and_normals = barcodes.add_normal_vectors(image_with_boxes, normal_vectors, overlapping_barcode_masks)
     return (
         output,
-        image_with_boxes,
+        image_with_boxes_and_normals,
         overlapping_barcode_bboxes,
         overlapping_barcode_masks,
     )
@@ -59,7 +61,7 @@ def run_task3(image_path: str = "", prompt: str = ""):
     items_bboxes = sam3_output[0]["boxes"].numpy()
     barcodes_bboxes = sam3_output[1]["boxes"].numpy()
     prompt_bboxes = sam3_output[2]["boxes"].numpy()
-    
+
     items_labels = _ram.label_boxes(image, items_bboxes)
 
     decoded_barcodes = barcodes.decode(image, barcodes_bboxes)
@@ -70,19 +72,25 @@ def run_task3(image_path: str = "", prompt: str = ""):
             requested_barcodes.append(barcode_bbox)
 
     matched_items = [
-        (bbox, [
-            (item_bbox, label)
-            for item_bbox, label in zip(items_bboxes, items_labels)
-            if utils.boxes_overlap(bbox, item_bbox)
-        ])
+        (
+            bbox,
+            [
+                (item_bbox, label)
+                for item_bbox, label in zip(items_bboxes, items_labels)
+                if utils.boxes_overlap(bbox, item_bbox)
+            ],
+        )
         for bbox in requested_barcodes
     ]
     matched_barcodes = [
-        (bbox, [
-            (barcode_bbox, label)
-            for barcode_bbox, label in zip(barcodes_bboxes, decoded_barcodes)
-            if utils.boxes_overlap(bbox, barcode_bbox)
-        ])
+        (
+            bbox,
+            [
+                (barcode_bbox, label)
+                for barcode_bbox, label in zip(barcodes_bboxes, decoded_barcodes)
+                if utils.boxes_overlap(bbox, barcode_bbox)
+            ],
+        )
         for bbox in prompt_bboxes
     ]
     return matched_items, matched_barcodes
