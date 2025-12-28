@@ -43,15 +43,15 @@ def run_task2(image_path: str = "", prompt: str = ""):
                 overlapping_barcode_masks.append(barcode_mask.squeeze(0))
                 break
 
-    image_with_boxes = utils.add_boxes(image, overlapping_barcode_bboxes)
-    normal_vectors = marigold.get_normals(image_path)
-    image_with_boxes_and_normals = barcodes.add_normal_vectors(image_with_boxes, normal_vectors, overlapping_barcode_masks)
-    return (
-        output,
-        image_with_boxes_and_normals,
-        overlapping_barcode_bboxes,
-        overlapping_barcode_masks,
+    decoded_barcodes = barcodes.decode(image, overlapping_barcode_masks)
+    image_with_boxes = utils.add_boxes(
+        image, overlapping_barcode_bboxes, decoded_barcodes
     )
+    normal_vectors = marigold.get_normals(image_path)
+    image_with_boxes_and_normals = barcodes.add_normal_vectors(
+        image_with_boxes, normal_vectors, overlapping_barcode_masks
+    )
+    return image_with_boxes_and_normals
 
 
 def run_task3(image_path: str = "", prompt: str = ""):
@@ -60,11 +60,12 @@ def run_task3(image_path: str = "", prompt: str = ""):
     sam3_output = sam.run_sam3_batch(image, sam3_prompt)
     items_bboxes = sam3_output[0]["boxes"].numpy()
     barcodes_bboxes = sam3_output[1]["boxes"].numpy()
+    barcodes_masks = sam3_output[1]["masks"].numpy()
     prompt_bboxes = sam3_output[2]["boxes"].numpy()
 
     items_labels = _ram.label_boxes(image, items_bboxes)
 
-    decoded_barcodes = barcodes.decode(image, barcodes_bboxes)
+    decoded_barcodes = barcodes.decode(image, barcodes_masks)
 
     requested_barcodes = []
     for decoded_barcode, barcode_bbox in zip(decoded_barcodes, barcodes_bboxes):
@@ -93,4 +94,35 @@ def run_task3(image_path: str = "", prompt: str = ""):
         )
         for bbox in prompt_bboxes
     ]
+    task3_barcode_bboxes = [barcode[0] for barcode in matched_items]
+    task3_item_matches_bboxes = [
+        item[0] for barcode in matched_items for item in barcode[1]
+    ]
+    task3_item_matches_labels = [
+        ",".join(item[1]) for barcode in matched_items for item in barcode[1]
+    ]
+
+    task3_item_bboxes = [item[0] for item in matched_barcodes]
+    task3_barcode_matches_bboxes = [
+        barcode[0] for item in matched_barcodes for barcode in item[1]
+    ]
+    task3_barcode_matches_labels = [
+        barcode[1] for item in matched_barcodes for barcode in item[1]
+    ]
+    bboxes_matched_items = task3_item_bboxes + task3_barcode_matches_bboxes
+    labels_matched_items = ["detected item"] * len(
+        task3_item_bboxes
+    ) + task3_barcode_matches_labels
+    matched_barcodes = utils.add_boxes(
+        image, bboxes_matched_items, labels_matched_items
+    )
+
+    bboxes_matched_barcodes = task3_barcode_bboxes + task3_item_matches_bboxes
+    labels_matched_barcodes = ["detected barcode"] * len(
+        task3_barcode_bboxes
+    ) + task3_item_matches_labels
+    matched_items = utils.add_boxes(
+        image, bboxes_matched_barcodes, labels_matched_barcodes
+    )
+
     return matched_items, matched_barcodes

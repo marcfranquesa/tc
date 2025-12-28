@@ -1,18 +1,6 @@
-import cv2
 import numpy as np
 import PIL
 import pyzbar.pyzbar as pyzbar
-
-
-def _estimate_normal_vector(barcode_mask: np.ndarray) -> np.ndarray:
-    # get the bounding box of the barcode
-    x, y, w, h = cv2.boundingRect(barcode_mask)
-    # get the center of the barcode
-    center_x = x + w / 2
-    center_y = y + h / 2
-    # get the normal vector
-    normal_vector = np.array([center_x, center_y])
-    return normal_vector
 
 
 def add_normal_vectors(
@@ -51,7 +39,7 @@ def add_normal_vectors(
     return image_with_normals
 
 
-def decode(
+def decode_pyzbar(
     image: PIL.Image.Image, bboxes: list[tuple[float, float, float, float]]
 ) -> list[str]:
     decoded_barcodes = []

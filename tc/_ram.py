@@ -28,7 +28,7 @@ def label_boxes(image: PIL.Image.Image, bboxes: list[tuple[int, int, int, int]])
     model = get_ram_plus_model()
     transform = ram.get_transform(_IMAGE_SIZE)
 
-    raw_image = image.convert("RGB")
+    raw_image = image.copy().convert("RGB")
     results = []
 
     for box in bboxes:

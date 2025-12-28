@@ -27,7 +27,7 @@ def main(task: int, output_dir: str = "out", **kwargs):
     elif task == 2:
         output = tasks.run_task2(image_path=image_path, prompt=prompt)
     elif task == 3:
-        print("Hello from sam 3!")
+        output = tasks.run_task3(image_path=image_path, prompt=prompt)
     else:
         print("Invalid task!")
 
