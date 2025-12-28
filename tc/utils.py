@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import PIL
 
 
@@ -59,3 +60,37 @@ def add_boxes(
         # Draw text
         draw.text((label_x + 2, label_y - 10), label, fill=(255, 255, 255), font=font)
     return image_with_boxes
+
+
+def _helper_plot(
+    image: PIL.Image.Image,
+    size: tuple[int, int] = (10, 8),
+    dpi: int = 150,
+    title: str | None = None,
+):
+    plt.figure(figsize=size, dpi=dpi)
+    plt.imshow(image)
+    plt.axis("off")
+    if title:
+        plt.title(title)
+
+
+def plot(
+    image: PIL.Image.Image,
+    size: tuple[int, int] = (10, 8),
+    dpi: int = 150,
+    title: str | None = None,
+):
+    _helper_plot(image, size, dpi, title)
+    plt.show()
+
+
+def save(
+    image: PIL.Image.Image,
+    size: tuple[int, int] = (10, 8),
+    dpi: int = 150,
+    title: str | None = None,
+    path: str = "output.png",
+):
+    _helper_plot(image, size, dpi, title)
+    plt.savefig(path)

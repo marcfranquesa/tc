@@ -1,0 +1,159 @@
+example1:
+  task: 1
+  image_path: "images/input_1.jpg"
+  prompt: "all"
+
+example1_1:
+  task: 1
+  image_path: "images/input_1.jpg"
+  prompt: ["bottle", "tool", "box"]
+
+example1_2:
+  task: 2
+  image_path: "images/input_1.jpg"
+  prompt: "all"
+
+example1_3:
+  task: 3
+  image_path: "images/input_1.jpg"
+  prompt: "bottle"
+
+example2:
+  task: 1
+  image_path: "images/input_2.jpg"
+  prompt: "all"
+
+example2_1:
+  task: 1
+  image_path: "images/input_2.jpg"
+  prompt: ["bottle", "tool", "box"]
+
+example2_2:
+  task: 2
+  image_path: "images/input_2.jpg"
+  prompt: "all"
+
+example2_3:
+  task: 3
+  image_path: "images/input_2.jpg"
+  prompt: "bottle"
+
+example3:
+  task: 1
+  image_path: "images/input_3.jpg"
+  prompt: "all"
+
+example3_1:
+  task: 1
+  image_path: "images/input_3.jpg"
+  prompt: ["bottle", "tool", "box"]
+
+example3_2:
+  task: 2
+  image_path: "images/input_3.jpg"
+  prompt: "all"
+
+example3_3:
+  task: 3
+  image_path: "images/input_3.jpg"
+  prompt: "bottle"
+
+example4:
+  task: 1
+  image_path: "images/input_4.jpg"
+  prompt: "all"
+
+example4_1:
+  task: 1
+  image_path: "images/input_4.jpg"
+  prompt: ["bottle", "tool", "box"]
+
+example4_2:
+  task: 2
+  image_path: "images/input_4.jpg"
+  prompt: "all"
+
+example4_3:
+  task: 3
+  image_path: "images/input_4.jpg"
+  prompt: "bottle"
+
+example5:
+  task: 1
+  image_path: "images/input_5.jpg"
+  prompt: "all"
+
+example5_1:
+  task: 1
+  image_path: "images/input_5.jpg"
+  prompt: ["bottle", "tool", "box"]
+
+example5_2:
+  task: 2
+  image_path: "images/input_5.jpg"
+  prompt: "all"
+
+example5_3:
+  task: 3
+  image_path: "images/input_5.jpg"
+  prompt: "bottle"
+
+example6:
+  task: 1
+  image_path: "images/input_6.jpg"
+  prompt: "all"
+
+example6_1:
+  task: 1
+  image_path: "images/input_6.jpg"
+  prompt: ["bottle", "tool", "box"]
+
+example6_2:
+  task: 2
+  image_path: "images/input_6.jpg"
+  prompt: "all"
+
+example6_3:
+  task: 3
+  image_path: "images/input_6.jpg"
+  prompt: "bottle"
+
+example7:
+  task: 1
+  image_path: "images/input_7.jpg"
+  prompt: "all"
+
+example7_1:
+  task: 1
+  image_path: "images/input_7.jpg"
+  prompt: ["bottle", "tool", "box"]
+
+example7_2:
+  task: 2
+  image_path: "images/input_7.jpg"
+  prompt: "all"
+
+example7_3:
+  task: 3
+  image_path: "images/input_7.jpg"
+  prompt: "bottle"
+
+example8:
+  task: 1
+  image_path: "images/input_8.jpg"
+  prompt: "all"
+
+example8_1:
+  task: 1
+  image_path: "images/input_8.jpg"
+  prompt: ["bottle", "tool", "box"]
+
+example8_2:
+  task: 2
+  image_path: "images/input_8.jpg"
+  prompt: "all"
+
+example8_3:
+  task: 3
+  image_path: "images/input_8.jpg"
+  prompt: "bottle"

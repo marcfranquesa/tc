@@ -1,5 +1,6 @@
 [project.scripts]
 cli = "tc.cli:cli"
+batch = "tc.cli:batch"
 
 [build-system]
 requires = ["setuptools>=80.9.0", "wheel"]
@@ -16,7 +17,7 @@ readme = "README.md"
 requires-python = ">=3.11,<3.13"
 dependencies = [
     "ram",
-    "sam3", "fairscale>=0.4.13,<0.5", "einops>=0.8.1,<0.9", "decord>=0.6.0,<0.7",
+    "sam3", "fairscale>=0.4.13,<0.5", "einops>=0.8.1,<0.9", "decord>=0.6.0,<0.7", "pyyaml",
 ]
 
 [tool.uv.sources]
@@ -65,3 +66,4 @@ opencv = ">=4.10.0,<5"
 torchvision = ">=0.20.1,<0.21"
 diffusers = ">=0.35.2,<0.36"
 accelerate = ">=1.12.0,<2"
+fire = ">=0.7.1,<0.8"
